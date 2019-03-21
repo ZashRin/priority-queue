@@ -22,6 +22,7 @@ class MaxHeap {
 	detachRoot() {
 		const detach = this.root;
 		this.root = null;
+		this.parentNodes.splice(this.parentNodes.indexOf(detach), 1);
 		return detach;
 	}
 
@@ -60,13 +61,19 @@ class MaxHeap {
 	shiftNodeUp(node) {
 		if(node.parent) {
 			if(node.parent.priority < node.priority) {
-				if(node.right) this.parentNodes.splice[this.parentNodes.indexOf(node), 1, node.parent];
-				else this.parentNodes.splice[this.parentNodes.indexOf(node), 0, node.parent];
+				if(node.right === null) {
+					if(node.parent.right) this.parentNodes[this.parentNodes.indexOf(node)] = node.parent;
+					else {
+						let temp = this.parentNodes[this.parentNodes.indexOf(node)];
+						this.parentNodes[this.parentNodes.indexOf(node)] = this.parentNodes[this.parentNodes.indexOf(node.parent)];
+						this.parentNodes[this.parentNodes.indexOf(node.parent)] = temp;
+					}
+				}
+				else if(this.parentNodes.indexOf(node) > -1) this.parentNodes.splice[this.parentNodes.indexOf(node), 1];
 				node.swapWithParent();
 				this.shiftNodeUp(node);
 			}
 		} else {
-			this.parentNodes.splice[this.parentNodes.indexOf(node), 1, this.root];
 			this.root = node;
 		}
 	}
