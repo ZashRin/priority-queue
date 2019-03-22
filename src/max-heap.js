@@ -5,10 +5,12 @@ class MaxHeap {
 		this.root = null;
 		this.parentNodes = [];
 		this.heapSize = 0;
+		this.order = [];
 	}
 
 	push(data, priority) {
 		let newNode = new Node(data, priority);
+		this.order.push(newNode);
 		this.insertNode(newNode);
 		this.shiftNodeUp(newNode);
 	}
@@ -17,6 +19,10 @@ class MaxHeap {
 		if(this.isEmpty()) return;
 		this.heapSize--;
 		const detached = this.detachRoot();
+		this.order.splice(this.order.indexOf(detached), 1);
+		/*this.restoreRootFromLastInsertedNode(detached);
+		this.shiftNodeDown(this.root);
+		return this.root.data;*/
 	}
 
 	detachRoot() {
@@ -28,7 +34,8 @@ class MaxHeap {
 	}
 
 	restoreRootFromLastInsertedNode(detached) {
-		this.root = this.parentNodes.pop();
+		this.root = this.order.pop();
+		this.parentNodes.splice(this.parentNodes.indexOf(this.root), 1);
 		if(detached.left !== this.root)
 			this.root.appendChild(detached.left);
 		if(detached.right !== this.root)
@@ -55,6 +62,7 @@ class MaxHeap {
 		this.root = null;
 		this.parentNodes = [];
 		this.heapSize = 0;
+		this.order = [];
 	}
 
 	insertNode(node) {
@@ -74,15 +82,17 @@ class MaxHeap {
 	shiftNodeUp(node) {
 		if(node.parent) {
 			if(node.parent.priority < node.priority) {
+				const nodeInd = this.parentNodes.indexOf(node);
+				const npInd = this.parentNodes.indexOf(node.parent);
 				if(node.right === null) {
-					if(node.parent.right) this.parentNodes[this.parentNodes.indexOf(node)] = node.parent;
+					if(node.parent.right) this.parentNodes[nodeInd] = node.parent;
 					else {
-						const temp = this.parentNodes[this.parentNodes.indexOf(node)];
-						this.parentNodes[this.parentNodes.indexOf(node)] = this.parentNodes[this.parentNodes.indexOf(node.parent)];
-						this.parentNodes[this.parentNodes.indexOf(node.parent)] = temp;
+						const temp = this.parentNodes[nodeInd];
+						this.parentNodes[nodeInd] = this.parentNodes[npInd];
+						this.parentNodes[npInd] = temp;
 					}
 				}
-				else if(this.parentNodes.indexOf(node) > -1) this.parentNodes.splice[this.parentNodes.indexOf(node), 1];
+				else if(nodeInd > -1) this.parentNodes.splice[nodeInd, 1];
 				node.swapWithParent();
 				this.shiftNodeUp(node);
 			}
